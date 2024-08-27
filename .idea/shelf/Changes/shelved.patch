@@ -1,0 +1,249 @@
+Index: src/main/java/org/example/Main.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/main/java/org/example/Main.java b/src/main/java/org/example/Main.java
+new file mode 100644
+--- /dev/null	(date 1724753190421)
++++ b/src/main/java/org/example/Main.java	(date 1724753190421)
+@@ -0,0 +1,22 @@
++package org.example;
++
++import org.example.WriterAndReader.*;
++
++
++import java.io.IOException;
++import java.util.Scanner;
++
++public class Main {
++    public static void main(String[] args) throws IOException {
++        Scanner scanner = new Scanner(System.in);
++        FileStatus fileStatus = new FileStatus();
++        String command;
++        while (true){
++            System.out.println(FileInformation.getInfo());
++            command = scanner.nextLine();
++            Control control = new Control(command);
++            control.controlMenu(scanner);
++        }
++    }
++
++}
+\ No newline at end of file
+Index: src/main/java/org/example/WriterAndReader/Reader.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/main/java/org/example/WriterAndReader/Reader.java b/src/main/java/org/example/WriterAndReader/Reader.java
+new file mode 100644
+--- /dev/null	(date 1724751638312)
++++ b/src/main/java/org/example/WriterAndReader/Reader.java	(date 1724751638312)
+@@ -0,0 +1,57 @@
++package org.example.WriterAndReader;
++
++import java.io.*;
++import java.util.ArrayList;
++
++public class Reader {
++
++    FileReader fr;
++    BufferedReader bf;
++    String line;
++    String command;
++    ArrayList<String> message = new ArrayList<>();
++
++    public Reader(String command) throws IOException {
++        this.command = command;
++        if(command.equals("все")){
++            System.out.println(all());
++        }else{
++            System.out.println(unicl());
++        }
++    }
++    public ArrayList<String> all() throws IOException {
++        message.clear();
++        try {
++            fr = new FileReader(FileInformation.getFile());
++            bf = new BufferedReader(fr);
++        } catch (FileNotFoundException e) {
++            throw new RuntimeException(e);
++        }
++        line = bf.readLine();
++        while (line != null){
++            message.add(line);
++            line = bf.readLine();
++        }
++        return message;
++    }
++    public ArrayList<String> unicl() throws IOException {
++        message.clear();
++        String[] lines;
++        try {
++            fr = new FileReader(FileInformation.getFile());
++            bf = new BufferedReader(fr);
++            line = bf.readLine();
++        } catch (FileNotFoundException e) {
++            throw new RuntimeException(e);
++        }
++        while (line != null){
++            lines = line.split(":");
++            if(lines[0].equals(command)){
++                message.add(line);
++            }
++            line = bf.readLine();
++            lines = null;
++        }
++        return message;
++    }
++}
+Index: src/main/java/org/example/Control.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/main/java/org/example/Control.java b/src/main/java/org/example/Control.java
+new file mode 100644
+--- /dev/null	(date 1724750604748)
++++ b/src/main/java/org/example/Control.java	(date 1724750604748)
+@@ -0,0 +1,34 @@
++package org.example;
++
++import org.example.WriterAndReader.FileInformation;
++import org.example.WriterAndReader.Reader;
++import org.example.WriterAndReader.Writer;
++
++import java.io.IOException;
++import java.util.Scanner;
++
++public class Control {
++    private String value;
++
++    Control(String value){
++        this.value = value;
++    }
++    public void controlMenu(Scanner scanner) throws IOException {
++        switch (value){
++            case "запись" :
++                System.out.println("Введите платформу, с новый строки логин, пароль(Логин:Пароль)");
++                new Writer(scanner.nextLine(),scanner.nextLine());
++                break;
++            case "спрос" :
++                System.out.println("Вывести весь спсиок или конкретную платформу?(команда все либо пишите платформу");
++                new Reader(scanner.nextLine());
++                break;
++            case "стоп" :
++                System.out.println("Bye-Bye");
++                System.exit(404);
++                break;
++            default:
++                System.out.println("Такой команды нет");
++        }
++    }
++}
+Index: src/main/java/org/example/WriterAndReader/FileInformation.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/main/java/org/example/WriterAndReader/FileInformation.java b/src/main/java/org/example/WriterAndReader/FileInformation.java
+new file mode 100644
+--- /dev/null	(date 1724748327773)
++++ b/src/main/java/org/example/WriterAndReader/FileInformation.java	(date 1724748327773)
+@@ -0,0 +1,21 @@
++package org.example.WriterAndReader;
++
++import java.io.File;
++
++public class FileInformation {
++    private static String fileName = "PASSLIST.txt";
++
++    private static String info = "Введите запись|спрос|стоп";
++    private static File file = new File(fileName);
++    public static String getFileName() {
++        return fileName;
++    }
++
++    public static String getInfo() {
++        return info;
++    }
++
++    public static File getFile() {
++        return file;
++    }
++}
+Index: src/main/java/org/example/WriterAndReader/Writer.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/main/java/org/example/WriterAndReader/Writer.java b/src/main/java/org/example/WriterAndReader/Writer.java
+new file mode 100644
+--- /dev/null	(date 1724749196255)
++++ b/src/main/java/org/example/WriterAndReader/Writer.java	(date 1724749196255)
+@@ -0,0 +1,34 @@
++package org.example.WriterAndReader;
++
++import java.io.BufferedWriter;
++import java.io.FileWriter;
++import java.io.IOException;
++
++public class Writer {
++    private String platforma;
++    private String pass;
++    private FileWriter fileWriter;
++    private BufferedWriter bufferedWriter;
++
++    public Writer(String platforma, String pass) {
++        this.platforma = platforma;
++        this.pass = pass;
++        writed();
++    }
++
++    public void writed() {
++        try {
++            if (!FileInformation.getFile().exists()) {
++                FileInformation.getFile().createNewFile();
++            }
++
++            fileWriter = new FileWriter(FileInformation.getFile(),true);
++            bufferedWriter = new BufferedWriter(fileWriter);
++            bufferedWriter.write(platforma + ":" + pass + "\n");
++            bufferedWriter.close();
++            System.out.println("Успешно");
++        } catch(IOException e){
++            System.out.println("Warning");
++        }
++    }
++}
+Index: src/main/java/org/example/WriterAndReader/FileStatus.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/main/java/org/example/WriterAndReader/FileStatus.java b/src/main/java/org/example/WriterAndReader/FileStatus.java
+new file mode 100644
+--- /dev/null	(date 1724748930630)
++++ b/src/main/java/org/example/WriterAndReader/FileStatus.java	(date 1724748930630)
+@@ -0,0 +1,20 @@
++package org.example.WriterAndReader;
++
++import java.io.File;
++import java.io.IOException;
++
++public class FileStatus {
++    public FileStatus(){
++        checker();
++    }
++    public void checker(){
++        try {
++            if(FileInformation.getFile().createNewFile()){
++                System.out.println("Файл создан");
++            }
++        } catch (IOException e) {
++            System.out.println("Произошла ошибка");
++        }
++        System.out.println("Файл подгружен");
++    }
++}
